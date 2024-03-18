@@ -1,0 +1,47 @@
+@ClocksUseSD
+scchart UseCase1{
+region c1{
+input signal start
+input signal stop
+initial state Active{
+input signal ActionDone
+output signal Remind_Nurse
+clock x = 0
+initial state stall
+if x>=1 do Remind_Nurse go to action
+state action "giveDose to c1" {
+region "Remind Nurse":
+initial state action "Reminder"
+do x=0 go to stall
+state stall
+if x >= 5 do Remind_Nurse go to action
+}
+if stop abort to stall
+}
+if stop abort to Inactive
+state Inactive
+if start go to Active
+}
+region c2{
+input signal start
+input signal stop
+initial state Active{
+input signal ActionDone
+output signal Remind_Nurse
+clock x = 0
+initial state stall
+if x>=2 do Remind_Nurse go to action
+state action "giveDose to c2" {
+region "Remind Nurse":
+initial state action "Reminder"
+do x=0 go to stall
+state stall
+if x >= 5 do Remind_Nurse go to action
+}
+if stop abort to stall
+}
+if stop abort to Inactive
+state Inactive
+if start go to Active
+}
+}
