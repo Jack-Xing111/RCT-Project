@@ -1,0 +1,187 @@
+@ClocksUseSD
+scchart UseCase1 {
+region c1toc10{
+initial state MI "Do same Action to Multiple Clients"{
+region main for i : 1 to 10 {
+input signal start, stop
+initial state Active{
+input signal ActionDone
+output signal float Remind_Nurse = 0
+clock x = 0
+initial state start
+do Remind_Nurse(100) go to action
+state action "giveMinocycline to clients" {
+region "Remind Nurse":
+initial state action "Reminder"
+do x=0 go to stall
+state stall
+if x >= 5 do Remind_Nurse(100) go to action
+}
+if ActionDone == i do x = 0 go to stall
+state stall
+if x>= 1440 go to start
+}
+if stop abort to Inactive
+state Inactive
+if start go to Active
+}
+}
+
+}
+
+region c11toc20{
+initial state MI "Do same Action to Multiple Clients"{
+region main for i : 1 to 10 {
+input signal start, stop
+initial state Active{
+input signal ActionDone
+output signal float Remind_Nurse = 0
+clock x = 0
+initial state start
+do Remind_Nurse(100) go to action
+state action "givePlacebo to clients" {
+region "Remind Nurse":
+initial state action "Reminder"
+do x=0 go to stall
+state stall
+if x >= 5 do Remind_Nurse(100) go to action
+}
+if ActionDone == i do x = 0 go to stall
+state stall
+if x>= 1440 go to start
+}
+if stop abort to Inactive
+state Inactive
+if start go to Active
+}
+}
+}
+
+region all1{
+input int ActionDone
+output bool Finish
+output int Remind_Nurse[2]
+clock x = 0
+initial state MI "collectHAMD of ALL"{
+region main for i : 1 to 20 {
+initial state Init
+do Remind_Nurse = {i} go to action
+state action "Reminder"
+do x = 0 go to stall
+state stall
+if x >= 5 do Remind_Nurse = {i} go to action
+
+if ActionDone == i go to Done
+final state Done
+}
+}
+do Finish = true join to Done 
+
+state Done
+}
+
+region all2{
+initial state MI "Do same Action to Multiple"{
+region main for i : 1 to 20 {
+input signal ActionDone
+output signal float Remind_Nurse = 0
+clock x = 0
+initial state stall
+if x>=20160 do Remind_Nurse go to action
+state action "collectHAMD of ALL" {
+region "Remind Nurse":
+initial state action "Reminder"
+do x=0 go to stall
+state stall
+if x >= 5 do Remind_Nurse go to action
+}
+
+if ActionDone go to done
+final state done
+}
+}
+}
+
+region all3{
+initial state MI "Do same Action to Multiple Clients"{
+region main for i : 1 to 20 {
+input signal start, stop
+initial state Active{
+input signal ActionDone
+output signal float Remind_Nurse = 0
+clock x = 0
+initial state start
+do Remind_Nurse go to action
+state action "collectHAMD of ALL" {
+region "Remind Nurse":
+initial state action "Reminder"
+do x=0 go to stall
+state stall
+if x >= 5 do Remind_Nurse go to action
+}
+if ActionDone == i do x = 0 go to stall
+state stall
+if x>= 40320 go to start
+}
+if stop abort to Inactive
+state Inactive
+if start go to Active
+}
+}
+}
+
+region all4{
+input signal int bloodSampleReceived
+input bool Rest
+output signal LogbloodSample
+
+
+initial state Monitor {
+region main for i : 1 to 20 {
+initial state IStall
+if bloodSampleReceived do LogbloodSample go to IDone
+state IDone
+
+}
+}
+
+if Rest go to Monitor
+}
+
+region all5{
+input signal int ESRReceived
+input bool Rest
+output signal LogESR
+
+
+initial state Monitor {
+region main for i : 1 to 20 {
+initial state IStall
+if ESRReceived do LogESR go to IDone
+state IDone
+
+}
+}
+
+if Rest go to Monitor
+}
+
+region all6{
+input int AdverseEvent
+input bool Rest
+output bool Beep, Log_Adverse
+
+
+initial state Monitor {
+region main for i : 1 to 20 {
+initial state IStall
+if AdverseEvent == i do Beep = true go to IDone
+state IDone
+
+do Log_Adverse = true go to IStall
+}
+}
+
+if Rest go to Monitor
+}
+}

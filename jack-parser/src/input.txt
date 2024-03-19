@@ -1,0 +1,24 @@
+//Clinical Trial - 1
+//Population Expression
+Participant 20
+Staff 5
+Group 2
+
+//Customization Expression
+Interval Time 12 weeks
+Alert 5
+NormalActions logBloodSample checkESR adverseEvent
+AlertActions giveMinocycline givePlacebo collectHAMD
+
+//alertAction Expression
+giveMinocycline for group1 with 100 mg every 1 day
+every 1 day givePlacebo for group2 with 100 mg
+collectHAMD for ALL
+after 2 weeks collectHAMD for ALL
+every 4 weeks collectHAMD for ALL
+
+//normalAction Expression
+logBbloodSample for ALL
+checkESR for ALL
+monitor adverseEvent for ALL
+stop
